@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: admin-table-001
+      author: pavan
+      changes:
+        - createTable:
+            tableName: admin
+            columns:
+              - column:
+                  name: user_id
+                  type: CHAR(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: department
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: admin
+            baseColumnNames: user_id
+            constraintName: fk_admin_user
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: CASCADE

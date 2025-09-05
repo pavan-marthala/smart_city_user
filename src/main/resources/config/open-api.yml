@@ -1,0 +1,685 @@
+openapi: 3.0.3
+info:
+  title: 'Smart City User API specification'
+  description: |
+    API for managing the user apis for samrt city.
+  version: 1.0.0
+  contact:
+    name: Samrt City
+    email: mgpavank@gmail.com
+    url: https://www.google.com/
+  license:
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+    name: Apache 2.0
+
+tags:
+  - name: User
+    description: User Management
+  - name: Auth
+    description: Auth Management
+  - name: Worker
+    description: Worker Management
+  - name: Admin
+    description: Admin Management
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Create user
+      description: Create a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        200:
+          description: User created successfully
+          content:
+            application/plain:
+              schema:
+                type: string
+                example: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXZhMW5AZ21hhvjvvkcm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3NTYyOTAyMzksImV4cCI6MTc1NjI5MjAzOX0.48RmPlfeivrksvrslkehQEJW_fTd_0
+        401:
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        400:
+          description: Bad request - Authentication Failed
+  /auth/register/worker:
+    post:
+      tags:
+        - Auth
+      summary: Create worker
+      description: Create a new worker
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerRequest'
+      responses:
+        200:
+          description: Worker created successfully
+          content:
+            application/plain:
+              schema:
+                type: string
+                example: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXZhMW5AZ21hhvjvvkcm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3NTYyOTAyMzksImV4cCI6MTc1NjI5MjAzOX0.48RmPlfeivrksvrslkehQEJW_fTd_0
+        401:
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        400:
+          description: Bad request - Authentication Failed
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: login user
+      description: login user
+      parameters:
+        - schema:
+            type: string
+          name: email
+          in: query
+          required: true
+        - schema:
+            type: string
+          name: passowrd
+          in: query
+          required: true
+      responses:
+        200:
+          description: User logged in successfully
+          content:
+            application/plain:
+              schema:
+                type: string
+                example: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXZhMW5AZ21hhvjvvkcm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3NTYyOTAyMzksImV4cCI6MTc1NjI5MjAzOX0.48RmPlfeivrksvrslkehQEJW_fTd_0
+        401:
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        400:
+          description: Bad request - Authentication Failed
+  /users:
+    get:
+      tags:
+        - User
+      summary: Get all users
+      description: Get all users
+      responses:
+        200:
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+  /users/{id}:
+    get:
+      tags:
+        - User
+      summary: Get user by Id
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+    patch:
+      tags:
+        - User
+      summary: update user
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        202:
+          description: User updated successfully
+        400:
+          description: Bad request
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+        404:
+          description: User does not exist
+        409:
+          description: Conflict – the resource has been modified by others
+    delete:
+      tags:
+        - User
+      summary: delete user
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        204:
+          description: Environment deleted successfully
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+        404:
+          description: Environment does not exist
+        409:
+          description: Conflict – the resource has been modified by others
+  /workers:
+    get:
+      tags:
+        - Worker
+      summary: Get all workers
+      description: Get all workers
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Worker'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+  /workers/{id}:
+    get:
+      tags:
+        - Worker
+      summary: Get worker by Id
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+    patch:
+      tags:
+        - Worker
+      summary: update worker
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerRequest'
+      responses:
+        202:
+          description: Worker updated successfully
+        400:
+          description: Bad request
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+        404:
+          description: Worker does not exist
+        409:
+          description: Conflict – the resource has been modified by others
+    delete:
+      tags:
+        - Worker
+      summary: delete worker
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        204:
+          description: Worker deleted successfully
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+        404:
+          description: Worker does not exist
+        409:
+          description: Conflict – the resource has been modified by others
+  /admins:
+    get:
+      tags:
+        - Admin
+      summary: Get all admins
+      description: Get all admins
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Admin'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+    post:
+      tags:
+        - Admin
+      summary: Create admin
+      description: Create a new admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+      responses:
+        200:
+          description: Admin created successfully
+          content:
+            application/plain:
+              schema:
+                type: string
+        401:
+          description: UNAUTHORIZED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        400:
+          description: Bad request - Authentication Failed
+  /admins/{id}:
+    get:
+      tags:
+        - Admin
+      summary: Get admin by Id
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Admin'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+    patch:
+      tags:
+        - Admin
+      summary: update admin
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminRequest'
+      responses:
+        202:
+          description: Admin updated successfully
+        400:
+          description: Bad request
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+        404:
+          description: Admin does not exist
+        409:
+          description: Conflict – the resource has been modified by others
+    delete:
+      tags:
+        - Admin
+      summary: delete admin
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/IfMatch'
+      responses:
+        204:
+          description: Admin deleted successfully
+        401:
+          description: Unauthorized - Authentication required
+        403:
+          description: Access forbidden - Permission required
+        404:
+          description: Admin does not exist
+        409:
+          description: Conflict – the resource has been modified by others
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the user
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          type: string
+          description: User name
+          example: Pavan
+          minLength: 2
+          maxLength: 36
+          pattern: '^[a-zA-Z0-9]+$'
+        role:
+          type: string
+          description: User role
+          example: USER
+          minLength: 2
+          maxLength: 36
+          pattern: '^[a-zA-Z0-9]+$'
+        password:
+          type: string
+          description: User password
+          example: Pavan
+          minLength: 2
+          maxLength: 36
+          pattern: '^[a-zA-Z0-9]+$'
+        email:
+          type: string
+          description: user email
+          example: mgpavank@gmail.com
+          minLength: 2
+          maxLength: 36
+        active:
+          type: boolean
+          description: true of false to indicated the user is active or not
+          example: true
+        etag:
+          type: integer
+          description: Entity tag for optimistic concurrency control
+          example: 1
+    Worker:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/User/properties/name'
+        email:
+          $ref: '#/components/schemas/User/properties/email'
+        role:
+          $ref: '#/components/schemas/User/properties/role'
+        id:
+          $ref: '#/components/schemas/User/properties/id'
+        password:
+          $ref: '#/components/schemas/User/properties/password'
+        active:
+          $ref: '#/components/schemas/User/properties/active'
+        etag:
+          $ref: '#/components/schemas/User/properties/etag'
+        skills:
+          type: string
+          description: Worker skils seprated by ,
+          example: skill 1
+          minLength: 2
+          maxLength: 36
+          pattern: '^[a-zA-Z0-9]+$'
+        availability:
+          type: boolean
+          description: true of false to indicated the work is avalible or not
+          example: true
+    Admin:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/User/properties/name'
+        email:
+          $ref: '#/components/schemas/User/properties/email'
+        role:
+          $ref: '#/components/schemas/User/properties/role'
+        id:
+          $ref: '#/components/schemas/User/properties/id'
+        password:
+          $ref: '#/components/schemas/User/properties/password'
+        active:
+          $ref: '#/components/schemas/User/properties/active'
+        etag:
+          $ref: '#/components/schemas/User/properties/etag'
+        department:
+          type: string
+          description: Admin department seprated by ,
+          example: dep 1
+          minLength: 2
+          maxLength: 36
+          pattern: '^[a-zA-Z0-9]+$'
+    UserRequest:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/User/properties/name'
+        email:
+          $ref: '#/components/schemas/User/properties/email'
+        password:
+          $ref: '#/components/schemas/User/properties/password'
+    AdminRequest:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/User/properties/name'
+        email:
+          $ref: '#/components/schemas/User/properties/email'
+        password:
+          $ref: '#/components/schemas/User/properties/password'
+        department:
+          $ref: '#/components/schemas/Admin/properties/department'
+    WorkerRequest:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/User/properties/name'
+        email:
+          $ref: '#/components/schemas/User/properties/email'
+        password:
+          $ref: '#/components/schemas/User/properties/password'
+        skills:
+          $ref: '#/components/schemas/Worker/properties/skills'
+        availability:
+          $ref: '#/components/schemas/Worker/properties/availability'
+    ErrorDetails:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          description: application specific error code
+          example: VE001
+        field:
+          type: string
+          description: field name which caused the error
+          example: name
+        value:
+          type: string
+          description: field value
+          example: de
+        message:
+          type: string
+          description: Reason for the error
+          example: name field require min 3 letters
+      required:
+        - field
+        - message
+    Error:
+      type: object
+      properties:
+        httpMethod:
+          type: string
+          enum:
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+            - GET
+          description: HTTP error code
+          example: POST
+        requestUri:
+          type: string
+          description: URI path caused the error
+          example: /environments
+        statusCode:
+          type: number
+          description: HTTP status code
+          example: 400
+        errorMessage:
+          type: string
+          description: describing the error context
+          example: validation error
+        correlationIdentifier:
+          type: string
+          format: uuid
+          description: correlation id to track the error
+        errorTimestamp:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp
+          example: 2025-05-19T14:30:00Z
+        detailedErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetails'
+
+      required:
+        - httpMethod
+        - requestUri
+        - statusCode
+        - correlationIdentifier
+        - errorTimestamp
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Present page number
+          example: 1
+        size:
+          type: integer
+          description: Number of items in the page
+          example: 1
+        totalItems:
+          type: integer
+          description: Total number of items
+          example: 1
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 1
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      description: Unique identifier
+      schema:
+        type: string
+        format: uuid
+    OwnerId:
+      name: ownerId
+      in: path
+      required: true
+      description: owner id
+      schema:
+        type: string
+    Page:
+      name: page
+      in: query
+      description: Page number (starting from 1)
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    size:
+      name: size
+      in: query
+      description: Number of items per page
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    IfMatch:
+      name: If-Match
+      in: header
+      description: Version number (for optimistic concurrency control)
+      required: true
+      schema:
+        type: integer
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - BearerAuth: []
+
+
+
+

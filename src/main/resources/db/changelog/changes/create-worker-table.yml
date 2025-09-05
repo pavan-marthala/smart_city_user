@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: worker-table-001
+      author: pavan
+      changes:
+        - createTable:
+            tableName: worker
+            columns:
+              - column:
+                  name: user_id
+                  type: CHAR(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: skills
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: availability
+                  type: BOOLEAN
+                  defaultValue: true
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: worker
+            baseColumnNames: user_id
+            constraintName: fk_worker_user
+            referencedTableName: user
+            referencedColumnNames: id
+            onDelete: CASCADE

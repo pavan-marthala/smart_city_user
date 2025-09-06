@@ -16,6 +16,12 @@ public class UserController {
 
     private final UserService userService;
 
+    @PostMapping
+    @PreAuthorize("hasAuthority('SYSTEM')")
+    public Mono<String> createUser(@RequestBody @Valid UserRequest userRequest){
+        return userService.register(userRequest);
+    }
+
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public Flux<User> getAllUsers() {
@@ -25,6 +31,11 @@ public class UserController {
     @GetMapping("/{id}")
     public Mono<User> getUserById(@PathVariable String id) {
         return userService.getUserById(id);
+    }
+    @GetMapping("/exist")
+    @PreAuthorize("hasAuthority('SYSTEM')")
+    public Mono<Boolean> existById() {
+        return userService.existById();
     }
 
     @PatchMapping("/{id}")

@@ -2,27 +2,50 @@ package com.smartcity.user.user;
 
 import com.smartcity.models.User;
 import com.smartcity.models.UserRequest;
+import com.smartcity.user.user.exceptions.UserException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import java.lang.module.ResolutionException;
-import java.time.Instant;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final R2dbcEntityTemplate r2dbcEntityTemplate;
+
+    public Mono<String> register(UserRequest userRequest) {
+        return userRepository.findByEmail(userRequest.getEmail())
+                .flatMap(user -> Mono.error(new UserException("Email already in use"))).switchIfEmpty(Mono.defer(() -> {
+                    assert userRequest.getId() != null;
+                    assert userRequest.getVillageId() != null;
+                    UserEntity user = UserEntity.builder()
+                    .id(userRequest.getId().toString())
+                    .name(userRequest.getName())
+                    .email(userRequest.getEmail())
+                    .villageId(String.valueOf(userRequest.getVillageId())).build();
+            return r2dbcEntityTemplate.insert(UserEntity.class).using(user);
+        })).cast(UserEntity.class).map(UserEntity::getId);
+    }
 
     public Flux<User> getAllUsers() {
-        return userRepository.findByRole("USER").map(UserMapper.INSTANCE::toModel);
+        return userRepository.findAll().map(UserMapper.INSTANCE::toModel);
     }
 
     public Mono<User> getUserById(String id) {
         return userRepository.findById(id)
                 .switchIfEmpty(Mono.error(new ResolutionException("User not found")))
                 .map(UserMapper.INSTANCE::toModel);
+    }
+
+    public Mono<Boolean> existById(){
+        return ReactiveSecurityContextHolder.getContext()
+                .map(securityContext -> securityContext.getAuthentication().getName())
+                .flatMap(userRepository::existsById);
     }
 
     public Mono<User> updateUser(String id, UserRequest user) {

@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-class JwtService implements TokenProvider {
+class JwtService  {
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -33,11 +33,6 @@ class JwtService implements TokenProvider {
         return extractClaim(jwt, claims -> (List<String>) claims.get("roles"));
     }
 
-    @Override
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(Map.of(), userDetails);
-    }
-
     boolean isTokenValid(String jwt) {
         return !isTokenExpired(jwt);
     }
@@ -46,21 +41,7 @@ class JwtService implements TokenProvider {
         return extractClaim(jwt, Claims::getExpiration).before(new Date());
     }
 
-    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        long currentTimeMillis = System.currentTimeMillis();
-        return Jwts.builder()
-                .claims(extraClaims)
-                .subject(userDetails.getUsername())
-                .claim("roles", userDetails.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .toArray())
-                .issuedAt(new Date(currentTimeMillis))
-                .expiration(new Date(currentTimeMillis + tokenExpiration * 1000))
-                .signWith(getSigningKey(), Jwts.SIG.HS256)
-                .compact();
-    }
-
-    private <T> T extractClaim(String jwt, Function<Claims, T> claimResolver) {
+   private <T> T extractClaim(String jwt, Function<Claims, T> claimResolver) {
         Claims claims = extractAllClaims(jwt);
         return claimResolver.apply(claims);
     }

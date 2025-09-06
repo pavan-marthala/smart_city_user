@@ -1,6 +1,6 @@
 package com.smartcity.user.shared.exception;
 
-import com.smartcity.user.auth.exception.AuthException;
+import com.smartcity.user.user.exceptions.UserException;
 import lombok.extern.slf4j.Slf4j;
 import com.smartcity.models.Error;
 import com.smartcity.models.ErrorDetails;
@@ -44,8 +44,8 @@ public class CustomExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<Error> handleAuthException(AuthException ex, ServerWebExchange exchange) {
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<Error> handleAuthException(UserException ex, ServerWebExchange exchange) {
         log.error("Authentication failed for request {} {}: {}",
                 exchange.getRequest().getMethod().name(),exchange.getRequest().getURI().getPath(), ex.getMessage());
 

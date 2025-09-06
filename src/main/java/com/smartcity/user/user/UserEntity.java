@@ -21,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user")
-public class UserEntity implements UserDetails {
+public class UserEntity {
     @Id
     @Column("id")
     private String id;
@@ -29,12 +29,8 @@ public class UserEntity implements UserDetails {
     private String name;
     @Column("email")
     private String email;
-    @Column("password")
-    private String password;
-    @Column("role")
-    private String role;
-    @Column("is_active")
-    private boolean isActive;
+    @Column("village_id")
+    private String villageId;
     @CreatedDate
     @Column("created_at")
     private Instant createdAt;
@@ -45,33 +41,4 @@ public class UserEntity implements UserDetails {
     @Column("etag")
     private Long etag;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(this::getRole);
-    }
-
-    @Override
-    public String getUsername() {
-        return this.id;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
-    }
 }

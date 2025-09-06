@@ -20,11 +20,6 @@ public class WorkerService {
     private final WorkerRepository workerRepository;
     private final UserRepository userRepository;
 
-    private static void checkRole(UserEntity userEntity,String message) {
-        Optional.of(userEntity.getRole()).filter(role -> !"WORKER".equals(role)).ifPresent(role -> {
-            throw new RuntimeException(message);
-        });
-    }
 
     public Flux<Worker> getAllWorkers() {
         log.info("Fetching all workers");
@@ -42,8 +37,7 @@ public class WorkerService {
     }
 
     private Mono<UserEntity> updateUserEntity(String id, WorkerRequest workerRequest, UserEntity userEntity) {
-        checkRole(userEntity,"User with id: " + id + " is not a worker");
-        UpdateHelper.updateIfNotNull(userEntity::setName, workerRequest.getName());
+       UpdateHelper.updateIfNotNull(userEntity::setName, workerRequest.getName());
         UpdateHelper.updateIfNotNull(userEntity::setEmail, workerRequest.getEmail());
         return workerRepository.findById(id).switchIfEmpty(Mono.error(new RuntimeException("Worker not found with id: " + id))).flatMap(workerEntity -> updateWorker(workerRequest, workerEntity)).then(userRepository.save(userEntity));
     }
@@ -56,9 +50,6 @@ public class WorkerService {
 
     public Mono<Void> deleteWorker(String id) {
         log.info("Deleting worker with id: {}", id);
-        return userRepository.findById(id).switchIfEmpty(Mono.error(new RuntimeException("User not found with id: " + id))).flatMap(userEntity -> {
-            checkRole(userEntity,"User with id: " + id + " is not a worker");
-            return userRepository.deleteById(id);
-        });
+        return userRepository.findById(id).switchIfEmpty(Mono.error(new RuntimeException("User not found with id: " + id))).flatMap(userEntity -> userRepository.deleteById(id));
     }
 }

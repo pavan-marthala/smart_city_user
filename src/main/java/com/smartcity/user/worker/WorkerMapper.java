@@ -14,8 +14,6 @@ public interface WorkerMapper {
     @Mapping(source = "userEntity.id", target = "id")
     @Mapping(source = "userEntity.name", target = "name")
     @Mapping(source = "userEntity.email", target = "email")
-    @Mapping(source = "userEntity.role", target = "role")
-    @Mapping(source = "userEntity.active", target = "active")
     @Mapping(source = "userEntity.etag", target = "etag")
     @Mapping(source = "workerEntity.skills", target = "skills")
     @Mapping(source = "workerEntity.availability", target = "availability")

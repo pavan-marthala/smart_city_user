@@ -11,12 +11,6 @@ import org.mapstruct.factory.Mappers;
 public interface WorkerMapper {
     public static WorkerMapper INSTANCE = Mappers.getMapper(WorkerMapper.class);
     WorkerEntity toEntity(WorkerRequest workerRequest);
-    @Mapping(source = "userEntity.id", target = "id")
-    @Mapping(source = "userEntity.name", target = "name")
-    @Mapping(source = "userEntity.email", target = "email")
-    @Mapping(source = "userEntity.etag", target = "etag")
-    @Mapping(source = "workerEntity.skills", target = "skills")
-    @Mapping(source = "workerEntity.availability", target = "availability")
-    Worker toModel(WorkerEntity workerEntity, UserEntity userEntity);
+    Worker toModel(WorkerEntity workerEntity);
 }
 

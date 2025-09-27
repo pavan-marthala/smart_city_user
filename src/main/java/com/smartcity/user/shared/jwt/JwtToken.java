@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
-class JwtToken extends AbstractAuthenticationToken {
+public class JwtToken extends AbstractAuthenticationToken {
 
     private final String token;
     private final UserDetails principal;

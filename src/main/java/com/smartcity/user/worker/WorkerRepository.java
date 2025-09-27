@@ -21,4 +21,6 @@ public interface WorkerRepository extends ReactiveCrudRepository<WorkerEntity,St
             "WHERE u.id = :id AND u.role = 'WORKER'")
     Mono<Worker> findByWorkerId(String id);
 
+    Mono<WorkerEntity> findByEmail(String email);
+
 }

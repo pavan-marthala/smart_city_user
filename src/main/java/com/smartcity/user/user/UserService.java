@@ -30,7 +30,9 @@ public class UserService {
     }
 
     public Flux<User> getAllUsers() {
-        return userRepository.findAll().flatMap(userEntity -> villageService.getVillageById(userEntity.getVillageId()).map(village -> UserMapper.INSTANCE.toModel(userEntity, village)));
+        return userRepository.findAll()
+                .flatMap(userEntity -> villageService.getVillageById(userEntity.getVillageId())
+                        .map(village -> UserMapper.INSTANCE.toModel(userEntity, village)));
     }
 
     public Mono<User> getUserById(String id) {

@@ -3,6 +3,7 @@ package com.smartcity.user.worker;
 import com.smartcity.models.Worker;
 import com.smartcity.models.WorkerRequest;
 import com.smartcity.user.shared.exception.ResourceNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,22 +18,33 @@ public class WorkerController {
     private final WorkerService workerService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('DISPATCHER')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Flux<Worker> getAllWorkers() {
         return workerService.getAllWorkers();
     }
 
+    @PreAuthorize("hasAuthority('SYSTEM')")
+    @PostMapping
+    public Mono<String> register(@Valid @RequestBody WorkerRequest workerRequest) {
+        return workerService.register(workerRequest);
+    }
+
     @GetMapping("/{id}")
     public Mono<Worker> getWorkerById(@PathVariable String id) {
-        return workerService.getWorkerById(id)
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Worker not found with id: " + id)));
+        return workerService.getWorkerById(id).switchIfEmpty(Mono.error(new ResourceNotFoundException("Worker not found with id: " + id)));
+    }
+
+    @GetMapping("/exist")
+    @PreAuthorize("hasAuthority('SYSTEM')")
+    public Mono<Boolean> existById() {
+        return workerService.existById();
     }
 
     @PatchMapping("/{id}")
     public Mono<ResponseEntity<Void>> updateWorker(@PathVariable String id, @RequestBody WorkerRequest workerRequest) {
-        return workerService.updateWorker(id, workerRequest)
-                .then(Mono.just(ResponseEntity.status(202).build()));
+        return workerService.updateWorker(id, workerRequest).then(Mono.just(ResponseEntity.status(202).build()));
     }
+
     @DeleteMapping("/{id}")
     public Mono<Void> deleteWorker(@PathVariable String id) {
         return workerService.deleteWorker(id);
